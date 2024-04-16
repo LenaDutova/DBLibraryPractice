@@ -1,0 +1,17 @@
+### IntelliJ IDEA ###
+/.idea/
+*.iws
+*.iml
+*.ipr
+
+# Compiled class file
+*.class
+
+/target/
+
+### Package Files ###
+*.jar
+*.war
+
+### Log file ###
+*.log
