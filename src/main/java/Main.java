@@ -157,7 +157,7 @@ public class Main {
                 "FROM author " +
                 "JOIN book ON author.id = book.id_author " +
                 "WHERE author.surname = ?;");       // создаем оператор шаблонного-запроса с "включаемыми" параметрами - ?
-        statement.setString(1, authorSurname);      // добавление параметров в запрос с учетом их типа и порядка; индексация с 1
+        statement.setString(1, authorSurname);      // "безопасное" добавление параметров в запрос; с учетом их типа и порядка (индексация с 1)
         ResultSet rs = statement.executeQuery();    // выполняем запроса на поиск и получаем список ответов
 
         while (rs.next()) {  // пока есть данные перебираем их и выводим
