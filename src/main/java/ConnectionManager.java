@@ -29,7 +29,6 @@ public class ConnectionManager {
     public static void checkDB () {
         try {
             Connection connection = DriverManager.getConnection(DATABASE_URL, USER_NAME, DATABASE_PASS);
-            System.out.println("Подключение к базе данных | " + DATABASE_URL);
         } catch (SQLException e) {
             System.out.println("Нет базы данных! Проверьте имя базы, путь к базе или разверните локально резервную копию согласно инструкции");
             throw new RuntimeException(e);
