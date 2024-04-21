@@ -23,6 +23,7 @@ public class Main {
             // TODO запросы на данные с параметрами
             getAuthorBooks(connection, "Пушкин", false); System.out.println();
             getAuthorBooks(connection, "Пушкин", true); System.out.println();
+            getBookTitles (connection, 6, 500);
 
         } catch (SQLException e) {
             // При открытии соединения, выполнении запросов могут возникать различные ошибки
@@ -164,6 +165,24 @@ public class Main {
             System.out.println(rs.getString(1) + " | " + rs.getString(2) + " | " + rs.getString(3));
         }
         System.out.println("SELECT with WHERE (" + (System.currentTimeMillis() - time) + " мс.)");
+    }
+
+    static void getBookTitles(Connection connection, int titleMinSize, int pageMinCount) throws SQLException{
+        if (titleMinSize < 0 || pageMinCount < 0) return;     // проверка "на дурака"
+
+        long time = System.currentTimeMillis();
+        PreparedStatement statement = connection.prepareStatement(
+                "SELECT id, title, page_count " +
+                        "FROM book " +
+                        "WHERE char_length(title) > ? AND page_count > ?;");       // создаем оператор шаблонного-запроса с "включаемыми" параметрами - ?
+        statement.setInt(1, titleMinSize);      // "безопасное" добавление параметров в запрос; с учетом их типа и порядка (индексация с 1)
+        statement.setInt(2, pageMinCount);      // "безопасное" добавление параметров в запрос; с учетом их типа и порядка (индексация с 1)
+        ResultSet rs = statement.executeQuery();    // выполняем запроса на поиск и получаем список ответов
+
+        while (rs.next()) {  // пока есть данные перебираем их и выводим
+            System.out.println(rs.getString(1) + " | " + rs.getString(2) + " | " + rs.getString(3));
+        }
+        System.out.println("SELECT with complex WHERE (" + (System.currentTimeMillis() - time) + " мс.)");
     }
 
     // endregion // SELECT-requests with params

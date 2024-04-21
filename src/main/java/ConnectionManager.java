@@ -11,11 +11,11 @@ public class ConnectionManager {
     private static final String URL_LOCALE_ADDRESS = "127.0.0.1:5432/"; // и это тоже ваш локальный компьютер
     private static final String URL_REMOTE = "10.242.65.114:5432/";     // FIXME IP-адрес кафедрального сервера
 
-    private static final String DATABASE_NAME = "rut_library";          // имя базы
+    private static final String DATABASE_NAME = "rut_library";          // FIXME имя базы
 
     public static final String DATABASE_URL = PROTOCOL_POSTGRES_SQL + URL_LOCALE_NAME + DATABASE_NAME;
-    public static final String USER_NAME = "postgres";                 // имя пользователя
-    public static final String DATABASE_PASS = "postgres";              // пароль базы данных
+    public static final String USER_NAME = "postgres";                  // FIXME имя пользователя
+    public static final String DATABASE_PASS = "postgres";              // FIXME пароль базы данных
 
     public static void checkDriver () {
         try {
