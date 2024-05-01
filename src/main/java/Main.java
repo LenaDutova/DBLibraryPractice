@@ -25,6 +25,15 @@ public class Main {
             getAuthorBooks(connection, "Пушкин", true); System.out.println();
             getBookTitles (connection, 6, 500);
 
+            // TODO запрос на добавление
+            addAuthor(connection, "Чехов", "Антон Петрович");
+
+            // TODO запрос на коррекцию
+            updateAuthor(connection, "Чехов", "Антон Павлович");
+
+            // TODO запрос на удаление
+            deleteAuthor(connection, "Чехов");
+
         } catch (SQLException e) {
             // При открытии соединения, выполнении запросов могут возникать различные ошибки
             // Согласно стандарту SQL:2008 в ситуациях нарушения ограничений уникальности (в т.ч. дублирования данных) возникают ошибки соответствующие статусу (или дочерние ему): SQLState 23000 - Integrity Constraint Violation
@@ -129,12 +138,12 @@ public class Main {
     // region // SELECT-requests with params
 
     static void getAuthorBooks (Connection connection, String authorSurname, boolean fromSQL) throws SQLException {
-        if (authorSurname == null || authorSurname.isBlank()) return;       // проверка "на дурака"
+        if (authorSurname == null || authorSurname.isBlank()) return;// проверка "на дурака"
         if (fromSQL) {
-            getAuthorBooks(connection, authorSurname);                      // если флаг верен, то выполняем аналогичный запрос c условием (WHERE)
+            getAuthorBooks(connection, authorSurname);               // если флаг верен, то выполняем аналогичный запрос c условием (WHERE)
         } else {
             long time = System.currentTimeMillis();
-            Statement statement = connection.createStatement();             // создаем оператор для простого запроса (без параметров)
+            Statement statement = connection.createStatement();      // создаем оператор для простого запроса (без параметров)
             ResultSet rs = statement.executeQuery(
                     "SELECT author.surname, author.name, book.title " +
                     "FROM author " +
@@ -177,7 +186,7 @@ public class Main {
                         "WHERE char_length(title) > ? AND page_count > ?;");       // создаем оператор шаблонного-запроса с "включаемыми" параметрами - ?
         statement.setInt(1, titleMinSize);      // "безопасное" добавление параметров в запрос; с учетом их типа и порядка (индексация с 1)
         statement.setInt(2, pageMinCount);      // "безопасное" добавление параметров в запрос; с учетом их типа и порядка (индексация с 1)
-        ResultSet rs = statement.executeQuery();    // выполняем запроса на поиск и получаем список ответов
+        ResultSet rs = statement.executeQuery();// выполняем запроса на поиск и получаем список ответов
 
         while (rs.next()) {  // пока есть данные перебираем их и выводим
             System.out.println(rs.getString(1) + " | " + rs.getString(2) + " | " + rs.getString(3));
@@ -186,4 +195,53 @@ public class Main {
     }
 
     // endregion // SELECT-requests with params
+
+
+    // region // INSERT-request
+
+    static void addAuthor (Connection connection, String surname, String name) throws SQLException{
+        if (surname == null || surname.isBlank() || name == null || name.isBlank()) return;     // проверка "на дурака"
+
+        PreparedStatement statement = connection.prepareStatement(
+                "INSERT INTO author(surname, name) VALUES (?, ?);");    // создаем оператор шаблонного-запроса с "включаемыми" параметрами - ?
+        statement.setString(1, surname);    // "безопасное" добавление фамилии
+        statement.setString(2, name);       // "безопасное" добавление имени
+
+        int count =
+                statement.executeUpdate();  // выполняем запрос на коррекцию и возвращаем количество измененных строк
+        System.out.println("Добавлено авторов " + count);
+    }
+
+    // endregion
+
+
+    // region // UPDATE-request by given name
+
+    static void updateAuthor (Connection connection, String keySurname, String newName) throws SQLException{
+        if (keySurname == null || keySurname.isBlank() || newName == null || newName.isBlank()) return;     // проверка "на дурака"
+
+        PreparedStatement statement = connection.prepareStatement("UPDATE author SET name=? WHERE surname=?;");
+        statement.setString(1, newName);
+        statement.setString(2, keySurname);
+
+        int count = statement.executeUpdate();  // выполняем запрос на коррекцию и возвращаем количество измененных строк
+        System.out.println("Изменено авторов " + count);
+    }
+
+    // endregion
+
+
+    // region // DELETE-request by given name
+
+    static void deleteAuthor (Connection connection, String keySurname) throws SQLException{
+        if (keySurname == null || keySurname.isBlank()) return;     // проверка "на дурака"
+
+        PreparedStatement statement = connection.prepareStatement("DELETE from author WHERE surname=?;");
+        statement.setString(1, keySurname);
+
+        int count = statement.executeUpdate(); // выполняем запрос на коррекцию и возвращаем количество измененных строк
+        System.out.println("Удалено авторов " + count);
+    }
+
+    // endregion
 }
