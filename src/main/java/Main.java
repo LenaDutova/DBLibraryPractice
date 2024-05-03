@@ -203,13 +203,18 @@ public class Main {
         if (surname == null || surname.isBlank() || name == null || name.isBlank()) return;     // проверка "на дурака"
 
         PreparedStatement statement = connection.prepareStatement(
-                "INSERT INTO author(surname, name) VALUES (?, ?);");    // создаем оператор шаблонного-запроса с "включаемыми" параметрами - ?
+                "INSERT INTO author(surname, name) VALUES (?, ?) returning id;", Statement.RETURN_GENERATED_KEYS);    // создаем оператор шаблонного-запроса с "включаемыми" параметрами - ?
         statement.setString(1, surname);    // "безопасное" добавление фамилии
         statement.setString(2, name);       // "безопасное" добавление имени
 
         int count =
                 statement.executeUpdate();  // выполняем запрос на коррекцию и возвращаем количество измененных строк
         System.out.println("Добавлено авторов " + count);
+
+        ResultSet rs = statement.getGeneratedKeys(); // прочитать запрошенные данные от БД
+        if (rs.next()) { // прокрутить к первой записи, если они есть
+            System.out.println("Идентификатор автора " + rs.getInt(1));
+        }
     }
 
     // endregion
