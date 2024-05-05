@@ -25,14 +25,10 @@ public class Main {
             getAuthorBooks(connection, "Пушкин", true); System.out.println();
             getBookTitles (connection, 6, 500);
 
-            // TODO запрос на добавление
-            addAuthor(connection, "Чехов", "Антон Петрович");
-
             // TODO запрос на коррекцию
-            updateAuthor(connection, "Чехов", "Антон Павлович");
-
-            // TODO запрос на удаление
-            deleteAuthor(connection, "Чехов");
+            addAuthor(connection, "Чехов", "Антон Петрович"); // добавление
+            updateAuthor(connection, "Чехов", "Антон Павлович"); // изменение
+            deleteAuthor(connection, "Чехов"); // удаление
 
         } catch (SQLException e) {
             // При открытии соединения, выполнении запросов могут возникать различные ошибки
@@ -244,7 +240,7 @@ public class Main {
         PreparedStatement statement = connection.prepareStatement("DELETE from author WHERE surname=?;");
         statement.setString(1, keySurname);
 
-        int count = statement.executeUpdate(); // выполняем запрос на коррекцию и возвращаем количество измененных строк
+        int count = statement.executeUpdate(); // выполняем запрос на удаление и возвращаем количество измененных строк
         System.out.println("Удалено авторов " + count);
     }
 
